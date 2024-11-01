@@ -20,6 +20,9 @@ namespace ApiStore.Mapper
                     .Select(p => p.Image).ToArray()));
 
             CreateMap<ProductCreateViewModel, ProductEntity>();
+
+            CreateMap<ProductEditViewModel, ProductEntity>()
+                .ForMember(x => x.ProductImages, opt => opt.Ignore());
         }
     }
 }
