@@ -56,25 +56,30 @@ const ProductEditPage = () => {
 
 
     const onSubmit = async (values: IProductEdit) => {
-        console.log("Їжте сало казаки", values);
-        console.log("files", files);
-        // try {
-        //     const updatedProduct = {
-        //         ...values,
-        //         newImages: files.map(file => file.originFileObj as File),
-        //         existingImages: files.map(file => file.url?.split('/').pop()),
-        //         id: Number(id),
-        //     };
-        //
-        //     const resp = await http_common.put<IProductEdit>(`/api/products`, updatedProduct, {
-        //         headers: { "Content-Type": "multipart/form-data" }
-        //     });
-        //
-        //     console.log("Product updated: ", resp.data);
-        //     navigate('/');
-        // } catch (error) {
-        //     console.error("Error updating product: ", error);
-        // }
+
+        try {
+            const updatedProduct : IProductEdit = {
+                price: values.price,
+                name: values.name,
+                categoryId: values.categoryId,
+                newImages: files
+                    .filter(file=> file.originFileObj)
+                    .map(file => file.originFileObj as RcFile),
+                removeImages: removeFiles,
+                id: Number(id),
+            };
+
+            console.log("Send model", updatedProduct);
+            const resp = await http_common.put<IProductEdit>(`/api/products`,
+                updatedProduct, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+
+            console.log("Product updated: ", resp.data);
+            navigate('/');
+        } catch (error) {
+            console.error("Error updating product: ", error);
+        }
     };
 
     const categoriesData = categories.map(item => ({
