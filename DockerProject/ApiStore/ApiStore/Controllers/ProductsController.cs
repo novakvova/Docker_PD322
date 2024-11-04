@@ -79,29 +79,30 @@ namespace ApiStore.Controllers
         [HttpPut]
         public async Task<IActionResult> Edit([FromForm] ProductEditViewModel model)
         {
+            var request = this.Request;
             var product = await context.Products
                 .Include(p => p.ProductImages)
                 .FirstOrDefaultAsync(p => p.Id == model.Id);
 
             mapper.Map(model, product);
 
-            if (model.PreviousImages != null)
-            {
-                foreach (var prevImage in model.PreviousImages)
-                {
-                    var existingImage = product.ProductImages
-                        .FirstOrDefault(img => img.Id == prevImage.Id);
+            //if (model.PreviousImages != null)
+            //{
+            //    foreach (var prevImage in model.PreviousImages)
+            //    {
+            //        var existingImage = product.ProductImages
+            //            .FirstOrDefault(img => img.Id == prevImage.Id);
 
-                    if (existingImage != null)
-                        existingImage.Priority = prevImage.Priority;
-                }
-            }
+            //        if (existingImage != null)
+            //            existingImage.Priority = prevImage.Priority;
+            //    }
+            //}
 
             ///Видаляємо не потрібні фото
-            if (model.ImagesIds != null)
+            if (model.RemoveImages != null)
             {
                 var imagesToDelete = context.ProductImages
-                    .Where(img => model.ImagesIds.Contains(img.Id))
+                    .Where(img => model.RemoveImages.Contains(img.Image))
                     .ToList();
 
                 foreach (var img in imagesToDelete)
@@ -114,6 +115,7 @@ namespace ApiStore.Controllers
             ///Нові фотки для товару - я де пріорітет - мабуть забулися
             if (model.NewImages != null)
             {
+                int maxPriority = product.ProductImages.Max(img => img.Priority);
                 foreach (var img in model.NewImages)
                 {
                     if (img != null)
@@ -123,6 +125,7 @@ namespace ApiStore.Controllers
                         {
                             Image = imagePath,
                             ProductId = product.Id,
+                            Priority = ++maxPriority
                         });
                     }
                 }
