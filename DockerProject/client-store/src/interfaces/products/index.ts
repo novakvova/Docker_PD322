@@ -1,7 +1,7 @@
 export interface IProductItem {
     id: number;
     name: string,
-    price: string,
+    price: number,
     images: string[],
     categoryName: string,
     categoryId: number,
@@ -18,11 +18,9 @@ export interface IProductEdit {
     id: number;
     name: string;
     price: number;
-    images: string[],
     categoryId: number;
-    previousImages: IUploadedFile[];
     newImages?: File[];
-    imagesIds?: number[];
+    removeImages?: string[];
 }
 
 export interface IUploadedFile {
